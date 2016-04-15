@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BrnoErasmusGuide</string>
+    <string name="eventsButtonText">Events</string>
+    <string name="facebook_app_id">573425292833632</string>
 </resources>
