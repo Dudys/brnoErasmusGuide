@@ -13,16 +13,16 @@ import pv239.fi.muni.cz.brnoerasmusguide.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    @Bind(R.id.event_button)
     private Button events;
 
-    @Bind(R.id.testButton) Button detail;
+//    @Bind(R.id.testButton) Button detail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setUI();
 
         events.setOnClickListener(new View.OnClickListener(){
             @Override public void onClick(View v){
@@ -31,20 +31,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        detail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDetail(v);
-            }
-        });
+//        detail.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showDetail(v);
+//            }
+//        });
     }
 
-    protected void showDetail(View v) {
+    @OnClick(R.id.testButton) protected void showDetail(View v) {
         Intent i = new Intent(MainActivity.this, BuildingDetailActivity.class);
         startActivity(i);
-    }
-
-    private void setUI(){
-        events = (Button) findViewById(R.id.event_button);
     }
 }
