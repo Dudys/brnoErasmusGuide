@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.EventsActivity" />
+        <activity android:name=".activity.BuildingDetailActivity"/>
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges=

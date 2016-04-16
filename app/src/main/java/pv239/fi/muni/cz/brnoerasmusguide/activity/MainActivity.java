@@ -6,16 +6,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button events;
 
+    @Bind(R.id.testButton) Button detail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         setUI();
 
         events.setOnClickListener(new View.OnClickListener(){
@@ -24,6 +30,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        detail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDetail(v);
+            }
+        });
+    }
+
+    protected void showDetail(View v) {
+        Intent i = new Intent(MainActivity.this, BuildingDetailActivity.class);
+        startActivity(i);
     }
 
     private void setUI(){
