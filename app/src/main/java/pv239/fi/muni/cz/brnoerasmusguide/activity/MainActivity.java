@@ -14,7 +14,7 @@ import pv239.fi.muni.cz.brnoerasmusguide.R;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.event_button)
-    private Button events;
+    Button events;
 
 //    @Bind(R.id.testButton) Button detail;
 
