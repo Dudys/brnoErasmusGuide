@@ -10,6 +10,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,17 +31,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-//        detail.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showDetail(v);
-//            }
-//        });
     }
 
     @OnClick(R.id.testButton) protected void showDetail(View v) {
         Intent i = new Intent(MainActivity.this, BuildingDetailActivity.class);
+        String name = "FI MUNI";
+        String address = "Bozetechova 48, Brno, 602 00";
+        String web = "www.google.com";
+        String openingHours = "Mon: 00:00 - 24:00\nTue: 00:00 - 24:00\nWed: 00:00 - 24:00\nThu: 00:00 - 24:00\nFri: 00:00 - 24:00\n";
+        String mhdInfo = "Unknown";
+        Building detail = new Building(name, address, web, openingHours, mhdInfo);
+        i.putExtra(BuildingDetailActivity.BUILDING, detail);
         startActivity(i);
     }
 }
