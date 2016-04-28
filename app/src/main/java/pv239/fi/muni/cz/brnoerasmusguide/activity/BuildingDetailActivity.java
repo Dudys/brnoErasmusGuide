@@ -84,7 +84,6 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
             TextView text = (TextView)convertView.findViewById(R.id.item_text);
             text.setText(getItem(position));
-            text.setTextSize(28);
 
             return convertView;
         }

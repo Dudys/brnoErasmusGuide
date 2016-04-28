@@ -8,9 +8,9 @@
 
     <ImageView
         android:id="@+id/buildingDetail_thumbnail"
+        android:scaleType="centerCrop"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
         app:layout_aspectRatio="178%"
         app:layout_widthPercent="100%"
         android:src="@mipmap/building_base_image_thumbnail"/>

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         String name = "FI MUNI";
         String address = "Bozetechova 48, Brno, 602 00";
         String web = "www.google.com";
-        String openingHours = "Mon: 00:00 - 24:00\nTue: 00:00 - 24:00\nWed: 00:00 - 24:00\nThu: 00:00 - 24:00\nFri: 00:00 - 24:00\n";
+        String openingHours = "Mon: 00:00 - 24:00\nTue: 00:00 - 24:00\nWed: 00:00 - 24:00\nThu: 00:00 - 24:00\nFri: 00:00 - 24:00";
         String mhdInfo = "Unknown";
         Building detail = new Building(name, address, web, openingHours, mhdInfo);
         i.putExtra(BuildingDetailActivity.BUILDING, detail);
