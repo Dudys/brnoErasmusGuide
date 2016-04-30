@@ -51,7 +51,9 @@ public class BuildingDetailActivity extends AppCompatActivity {
      * FAB action.
      */
     @OnClick(R.id.fab) protected void showMap() {
-        Log.d("BuildingDetail", "Should show map now.");
+        Intent i = new Intent(BuildingDetailActivity.this, MapsActivity.class);
+        startActivity(i);
+//        Log.d("BuildingDetail", "Should show map now.");
     }
 
     /**
