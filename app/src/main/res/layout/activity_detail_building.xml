@@ -15,7 +15,7 @@
         app:layout_widthPercent="100%"
         android:src="@mipmap/building_base_image_thumbnail"/>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/bottom_action_sheet_persistent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/bottom_action_sheet_persistent"
         android:layout_alignEnd="@+id/bottom_action_sheet_persistent"
+        android:layout_alignRight="@+id/bottom_action_sheet_persistent"
         android:layout_marginRight="30dp"
         android:layout_marginTop="-30dp"
         android:src="@android:drawable/ic_dialog_map" />

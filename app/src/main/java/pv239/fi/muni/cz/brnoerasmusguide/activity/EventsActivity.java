@@ -1,7 +1,6 @@
 package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +34,6 @@ public class EventsActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         // AppEventsLogger.activateApp(this);
 
-//        eventList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         eventList.setLayoutManager(llm);

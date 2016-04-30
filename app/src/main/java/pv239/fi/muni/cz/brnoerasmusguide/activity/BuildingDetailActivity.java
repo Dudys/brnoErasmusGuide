@@ -3,13 +3,13 @@ package pv239.fi.muni.cz.brnoerasmusguide.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -29,10 +29,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
     public static final String BUILDING = "building";
 
     @Bind(R.id.buildingDetail_thumbnail) ImageView thumbnail;
-    @Bind(R.id.bottom_action_sheet_persistent) ListView details;
-    private List<String> strings = Arrays.asList();
-    // Temporary icons, will be replaced.
-    private List<Integer> icons = Arrays.asList(android.R.drawable.ic_menu_view, android.R.drawable.ic_menu_day, android.R.drawable.ic_dialog_info);
+    @Bind(R.id.bottom_action_sheet_persistent) RecyclerView details;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +39,12 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
         // Get a Building object if presented (should always be)
         Intent i = getIntent();
-        if(i.hasExtra(BUILDING)) {
-            Building b = i.getParcelableExtra(BUILDING);
-            strings = Arrays.asList(b.web, b.openingHours, b.mhdInfo);
-        }
+        Building b = i.getParcelableExtra(BUILDING);
 
-        details.setAdapter(new MyAdapter());
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        details.setLayoutManager(llm);
+        details.setAdapter(new BuildingDetailAdapter(b));
     }
 
     /**
@@ -61,41 +58,44 @@ public class BuildingDetailActivity extends AppCompatActivity {
      *  Adapter for list of information.
      *  TODO: Use reusable view.
      */
-    public class MyAdapter extends BaseAdapter {
+    public class BuildingDetailAdapter extends RecyclerView.Adapter<BuildingDetailAdapter.BuildingViewHolder> {
+
+        private List<Integer> icons = Arrays.asList(android.R.drawable.ic_menu_view, android.R.drawable.ic_menu_day, android.R.drawable.ic_dialog_info);
+        private List<String> strings;
+
+        public BuildingDetailAdapter(Building b) {
+            strings = Arrays.asList(b.web, b.openingHours, b.address);
+        }
+
         @Override
-        public int getCount() {
+        public BuildingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.icon_list_item, parent, false);
+            return new BuildingViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(BuildingViewHolder holder, int position) {
+            String item = strings.get(position);
+            Integer image = icons.get(position);
+            holder.title.setText(item);
+            holder.image.setImageResource(image);
+        }
+
+        @Override
+        public int getItemCount() {
             return strings.size();
         }
 
-        @Override
-        public String getItem(int position) {
-            return strings.get(position);
-        }
+        protected class BuildingViewHolder extends RecyclerView.ViewHolder {
 
-        public int getItemImage(int position) { return icons.get(position); }
+            protected TextView title;
+            protected ImageView image;
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(BuildingDetailActivity.this);
-            convertView = inflater.inflate(R.layout.icon_list_item, parent, false);
-
-            ImageView icon = (ImageView)convertView.findViewById(R.id.item_icon);
-            icon.setImageResource(getItemImage(position));
-
-            TextView text = (TextView)convertView.findViewById(R.id.item_text);
-            text.setText(getItem(position));
-
-            return convertView;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public boolean isEnabled(int position) {
-            return false;
+            public BuildingViewHolder(View v) {
+                super(v);
+                title = (TextView) v.findViewById(R.id.item_text);
+                image = (ImageView) v.findViewById(R.id.item_icon);
+            }
         }
     }
 }
