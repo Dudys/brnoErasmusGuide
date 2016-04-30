@@ -4,4 +4,15 @@
     <string name="facebook_app_id">573425292833632</string>
     <string name="event_attend">Attend</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_menu">MenuActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="events">Events</string>
+    <string name="faculties">Faculties</string>
+    <string name="canteens">Canteens</string>
+    <string name="accommodation">Accommodation</string>
+    <string name="section_buildings">Find building</string>
 </resources>

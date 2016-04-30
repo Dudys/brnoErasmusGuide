@@ -9,24 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".activity.MainActivity">
 
-    <Button
-        android:id="@+id/testButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="90dp"
-        android:text="DETAIL"/>
-
-    <Button
-        android:id="@+id/event_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/testButton"
-        android:layout_alignTop="@+id/testButton"
-        android:layout_marginRight="20dp"
-        android:text="@string/eventsButtonText" />
-
     <ImageView
         android:id="@+id/welcomeScreen_image"
         android:layout_width="wrap_content"

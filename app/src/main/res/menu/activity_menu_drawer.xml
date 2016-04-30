@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_event"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/events" />
+    </group>
+
+    <item android:title="@string/section_buildings">
+        <menu>
+            <item
+                android:id="@+id/nav_faculty"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/faculties" />
+            <item
+                android:id="@+id/nav_canteen"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/canteens" />
+            <item
+                android:id="@+id/nav_accommodation"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/accommodation" />
+        </menu>
+    </item>
+
+</menu>

@@ -58,7 +58,6 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
     /**
      *  Adapter for list of information.
-     *  TODO: Use reusable view.
      */
     public class BuildingDetailAdapter extends RecyclerView.Adapter<BuildingDetailAdapter.BuildingViewHolder> {
 
