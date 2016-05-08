@@ -16,4 +16,5 @@
     <string name="canteens">Canteens</string>
     <string name="accommodation">Accommodation</string>
     <string name="section_buildings">Find building</string>
+    <string name="facebook_prompt">Please login to your facebook account to see any events.</string>
 </resources>

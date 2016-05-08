@@ -1,19 +1,24 @@
 package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
 import android.content.Intent;
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Event;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -21,21 +26,28 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class EventsActivity extends AppCompatActivity {
 
     @Bind(R.id.event_list) RecyclerView eventList;
-    private List<String> events = Arrays.asList("One","Two","Three");
-    private List<Integer> images = Arrays.asList(R.mipmap.building_base_image_thumbnail, R.mipmap.wrigley_building_chicago2, R.mipmap.building_base_image_thumbnail);
+    @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
 
-    private TextView mTextDetails;
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
@@ -71,13 +83,12 @@ public class EventsActivity extends AppCompatActivity {
         mLoginButton = (LoginButton) findViewById(R.id.login_button);
         mCallbackManager = CallbackManager.Factory.create();
 
-        mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "user_groups"));
+        mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "user_events"));
         mLoginButton.registerCallback(mCallbackManager, mCallback);
 
         mTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-
             }
         };
 
@@ -95,7 +106,6 @@ public class EventsActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         eventList.setLayoutManager(llm);
-        eventList.setAdapter(new EventAdapter(events, images));
     }
 
     @Override
@@ -121,18 +131,37 @@ public class EventsActivity extends AppCompatActivity {
 
     private void displayWelcomeMessage(Profile profile){
         if(profile != null) {
-            mTextDetails.setText("Welcome " + profile.getName());
+            Log.d("EventsActivity","Welcome " + profile.getName());
+
+            fbPrompt.setVisibility(View.INVISIBLE);
+            List<String> events = Arrays.asList("181538512240958","284623215209931","837627703032668");
+            eventList.setAdapter(new EventAdapter(events));
         }
     }
 
     private class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
-        private List<String> titles;
-        private List<Integer> images;
+        private List<Event> events = new ArrayList<>();
 
-        public EventAdapter(List<String> titles, List<Integer> images) {
-            this.titles = titles;
-            this.images = images;
+        public EventAdapter(List<String> eventList) {
+
+            for(String event : eventList) {
+                new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/" + event,
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                JSONObject j = response.getJSONObject();
+                                final Event e = new Event(j);
+                                events.add(e);
+                                Log.d("EventAdapter", "Event added");
+                                notifyDataSetChanged();
+                            }
+                        }
+                ).executeAsync();
+            }
         }
 
         @Override
@@ -143,26 +172,58 @@ public class EventsActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(EventViewHolder holder, int position) {
-            String item = titles.get(position);
-            Integer image = images.get(position);
-            holder.title.setText(item);
-            holder.image.setImageResource(image);
+            Event e = events.get(position);
+            holder.title.setText(e.name);
+            holder.place.setText(e.place);
+            holder.startTime.setText(e.startTime);
+            holder.loadImage(e.id);
         }
 
         @Override
         public int getItemCount() {
-            return titles.size();
+            return events.size();
         }
 
         protected class EventViewHolder extends RecyclerView.ViewHolder {
 
             protected TextView title;
             protected ImageView image;
+            protected TextView place;
+            protected TextView startTime;
 
             public EventViewHolder(View v) {
                 super(v);
                 title = (TextView) v.findViewById(R.id.event_title);
                 image = (ImageView) v.findViewById(R.id.event_image);
+                place = (TextView) v.findViewById(R.id.event_place);
+                startTime = (TextView) v.findViewById(R.id.event_time);
+            }
+
+            public void loadImage(String eventId) {
+
+                Bundle param = new Bundle();
+                param.putString("fields", "cover");
+                GraphRequest req = new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/" + eventId,
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                JSONObject j = response.getJSONObject();
+                                Log.d("Facebook request", response.toString());
+                                String s = "";
+                                try {
+                                    s = j.getJSONObject("cover").getString("source");
+                                } catch(JSONException ex) {
+                                    Log.d("EventAdapter", "cover exception: " + ex.getLocalizedMessage());
+                                }
+                                Picasso.with(getApplicationContext()).load(s).into(image);
+                            }
+                        }
+                );
+                req.setParameters(param);
+                req.executeAsync();
             }
         }
     }
