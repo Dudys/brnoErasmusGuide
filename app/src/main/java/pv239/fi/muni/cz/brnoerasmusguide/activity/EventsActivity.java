@@ -36,6 +36,12 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.JodaTimePermission;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +50,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventsActivity extends AppCompatActivity {
+
+    private static final String ERASMUS_GROUP_ID = "1652673088347828";
 
     @Bind(R.id.event_list) RecyclerView eventList;
     @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
@@ -59,6 +67,7 @@ public class EventsActivity extends AppCompatActivity {
         public void onSuccess(LoginResult loginResult) {
             AccessToken accessToken = loginResult.getAccessToken();
             Profile profile = Profile.getCurrentProfile();
+
             displayWelcomeMessage(profile);
         }
 
@@ -83,7 +92,7 @@ public class EventsActivity extends AppCompatActivity {
         mLoginButton = (LoginButton) findViewById(R.id.login_button);
         mCallbackManager = CallbackManager.Factory.create();
 
-        mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "user_events"));
+        mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "user_events", "user_managed_groups"));
         mLoginButton.registerCallback(mCallbackManager, mCallback);
 
         mTokenTracker = new AccessTokenTracker() {
@@ -131,11 +140,9 @@ public class EventsActivity extends AppCompatActivity {
 
     private void displayWelcomeMessage(Profile profile){
         if(profile != null) {
-            Log.d("EventsActivity","Welcome " + profile.getName());
-
+            Log.d("EventsActivity", "Welcome " + profile.getName());
             fbPrompt.setVisibility(View.INVISIBLE);
-            List<String> events = Arrays.asList("181538512240958","284623215209931","837627703032668");
-            eventList.setAdapter(new EventAdapter(events));
+            eventList.setAdapter(new EventAdapter());
         }
     }
 
@@ -143,25 +150,38 @@ public class EventsActivity extends AppCompatActivity {
 
         private List<Event> events = new ArrayList<>();
 
-        public EventAdapter(List<String> eventList) {
+        public EventAdapter(){
 
-            for(String event : eventList) {
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/" + event,
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-                                JSONObject j = response.getJSONObject();
-                                final Event e = new Event(j);
-                                events.add(e);
-                                Log.d("EventAdapter", "Event added");
-                                notifyDataSetChanged();
+            GraphRequest request = GraphRequest.newGraphPathRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/" + ERASMUS_GROUP_ID + "/events",
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            JSONObject j = response.getJSONObject();
+                            Log.d("Facebook request", response.toString());
+                            try {
+                                JSONArray jsonArray = j.getJSONArray("data");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    try {
+                                        final Event e = new Event(jsonArray.getJSONObject(i));
+                                        if(!events.contains(e) && e.startTime.isAfter(DateTime.now().minusDays(1))) {
+                                            events.add(e);
+                                            Log.d("EventAdapter", "Event added");
+                                            notifyDataSetChanged();
+                                        }
+                                    } catch (JSONException e) {
+                                        Log.d("Error", "when getting " + i + ". item from json!");
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
+
+                            Log.d("EventAdapter", "Events ids added");
                         }
-                ).executeAsync();
-            }
+                    }
+            );
+            request.executeAsync();
         }
 
         @Override
@@ -175,7 +195,8 @@ public class EventsActivity extends AppCompatActivity {
             Event e = events.get(position);
             holder.title.setText(e.name);
             holder.place.setText(e.place);
-            holder.startTime.setText(e.startTime);
+            String dateAndTime = e.startTime.toString("dd.MM.yyyy' at 'HH:mm");
+            holder.startTime.setText(dateAndTime);
             holder.loadImage(e.id);
         }
 
@@ -218,7 +239,9 @@ public class EventsActivity extends AppCompatActivity {
                                 } catch(JSONException ex) {
                                     Log.d("EventAdapter", "cover exception: " + ex.getLocalizedMessage());
                                 }
-                                Picasso.with(getApplicationContext()).load(s).into(image);
+                                if(!s.equals("")) {
+                                    Picasso.with(getApplicationContext()).load(s).into(image);
+                                }
                             }
                         }
                 );

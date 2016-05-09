@@ -2,6 +2,9 @@ package pv239.fi.muni.cz.brnoerasmusguide.dataClasses;
 
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +18,7 @@ public class Event {
     public String description;
     public String image;
     public String place;
-    public String startTime;
+    public DateTime startTime;
 
     public Event(JSONObject json) {
         Log.d("Event", "json: " + json.toString());
@@ -24,10 +27,32 @@ public class Event {
             description = json.getString("description");
             name = json.getString("name");
             place = json.getJSONObject("place").getString("name");
-            startTime = json.getString("start_time");
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZZ");
+            startTime = formatter.parseDateTime(json.getString("start_time"));
             image = null;
         } catch(JSONException e) {
             Log.d("Event", "exception: " + e.getLocalizedMessage());
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Event)) return false;
+
+        Event event = (Event) o;
+
+        if (!id.equals(event.id)) return false;
+        return name.equals(event.name);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
+
 }
