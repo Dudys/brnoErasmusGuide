@@ -51,7 +51,7 @@ import java.util.List;
 
 public class EventsActivity extends AppCompatActivity {
 
-    private static final String ERASMUS_GROUP_ID = "1652673088347828";
+    private static final String[] ERASMUS_GROUP_ID = {"1652673088347828", "11480938751"};
 
     @Bind(R.id.event_list) RecyclerView eventList;
     @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
@@ -152,36 +152,38 @@ public class EventsActivity extends AppCompatActivity {
 
         public EventAdapter(){
 
-            GraphRequest request = GraphRequest.newGraphPathRequest(
-                    AccessToken.getCurrentAccessToken(),
-                    "/" + ERASMUS_GROUP_ID + "/events",
-                    new GraphRequest.Callback() {
-                        public void onCompleted(GraphResponse response) {
-                            JSONObject j = response.getJSONObject();
-                            Log.d("Facebook request", response.toString());
-                            try {
-                                JSONArray jsonArray = j.getJSONArray("data");
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    try {
-                                        final Event e = new Event(jsonArray.getJSONObject(i));
-                                        if(!events.contains(e) && e.startTime.isAfter(DateTime.now().minusDays(1))) {
-                                            events.add(e);
-                                            Log.d("EventAdapter", "Event added");
-                                            notifyDataSetChanged();
+            for (String groupId : ERASMUS_GROUP_ID) {
+                GraphRequest request = GraphRequest.newGraphPathRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/" + groupId + "/events",
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                JSONObject j = response.getJSONObject();
+                                Log.d("Facebook request", response.toString());
+                                try {
+                                    JSONArray jsonArray = j.getJSONArray("data");
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        try {
+                                            final Event e = new Event(jsonArray.getJSONObject(i));
+                                            if (!events.contains(e) && e.startTime.isAfter(DateTime.now().minusDays(1))) {
+                                                events.add(e);
+                                                Log.d("EventAdapter", "Event added");
+                                                notifyDataSetChanged();
+                                            }
+                                        } catch (JSONException e) {
+                                            Log.d("Error", "when getting " + i + ". item from json!");
                                         }
-                                    } catch (JSONException e) {
-                                        Log.d("Error", "when getting " + i + ". item from json!");
                                     }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
 
-                            Log.d("EventAdapter", "Events ids added");
+                                Log.d("EventAdapter", "Events ids added");
+                            }
                         }
-                    }
-            );
-            request.executeAsync();
+                );
+                request.executeAsync();
+            }
         }
 
         @Override
