@@ -2,100 +2,71 @@
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
     android:id="@+id/event_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="3dp"
     android:layout_margin="6dp">
 
-    <android.support.percent.PercentFrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/event_image"
+            android:scaleType="centerCrop"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
 
-            <ImageView
-                android:id="@+id/event_image"
-                app:layout_aspectRatio="178%"
-                app:layout_widthPercent="100%"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/wrigley_building_chicago2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/event_title"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:text="Event Name"
+                android:maxLines="2"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/event_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="event place"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/event_title"
+                    android:id="@+id/event_friends_attending"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Event Name"
-                    android:maxLines="2"
-                    android:textSize="20sp"/>
+                    android:layout_alignBottom="@+id/event_attend"
+                    android:textSize="16sp"
+                    android:text="4 friends are attending" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/event_attend"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/event_place"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="event place"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="|"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginRight="3dp"/>
-
-                    <TextView
-                        android:id="@+id/event_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="event start"/>
-
-                </LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/event_friends_attending"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/event_attend"
-                        android:textSize="16sp"
-                        android:text="4 friends are attending" />
-
-                    <Button
-                        android:id="@+id/event_attend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/event_attend"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="4dp" />
-                </RelativeLayout>
-
-            </LinearLayout>
+                    android:text="@string/event_attend"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="4dp" />
+            </RelativeLayout>
 
         </LinearLayout>
 
-    </android.support.percent.PercentFrameLayout>
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

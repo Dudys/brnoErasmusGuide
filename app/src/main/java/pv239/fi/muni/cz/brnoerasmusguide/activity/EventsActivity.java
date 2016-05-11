@@ -1,9 +1,7 @@
 package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
 import android.content.Intent;
-import android.hardware.Camera;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,16 +29,11 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.JodaTimePermission;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -195,10 +188,13 @@ public class EventsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(EventViewHolder holder, int position) {
             Event e = events.get(position);
+            StringBuilder sb = new StringBuilder();
+            sb.append(e.place);
+            sb.append(" | ");
+            sb.append(e.startTime.toString("dd.MM.yyyy' at 'HH:mm"));
+
             holder.title.setText(e.name);
-            holder.place.setText(e.place);
-            String dateAndTime = e.startTime.toString("dd.MM.yyyy' at 'HH:mm");
-            holder.startTime.setText(dateAndTime);
+            holder.place.setText(sb.toString());
             holder.loadImage(e.id);
         }
 
@@ -212,14 +208,12 @@ public class EventsActivity extends AppCompatActivity {
             protected TextView title;
             protected ImageView image;
             protected TextView place;
-            protected TextView startTime;
 
             public EventViewHolder(View v) {
                 super(v);
                 title = (TextView) v.findViewById(R.id.event_title);
                 image = (ImageView) v.findViewById(R.id.event_image);
                 place = (TextView) v.findViewById(R.id.event_place);
-                startTime = (TextView) v.findViewById(R.id.event_time);
             }
 
             public void loadImage(String eventId) {
@@ -243,6 +237,7 @@ public class EventsActivity extends AppCompatActivity {
                                 }
                                 if(!s.equals("")) {
                                     Picasso.with(getApplicationContext()).load(s).into(image);
+                                    image.invalidate();
                                 }
                             }
                         }
