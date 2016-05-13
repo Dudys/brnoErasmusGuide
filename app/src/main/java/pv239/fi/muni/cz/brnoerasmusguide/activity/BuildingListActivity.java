@@ -18,6 +18,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
+import pv239.fi.muni.cz.brnoerasmusguide.pojo.FacultyPojo;
+import pv239.fi.muni.cz.brnoerasmusguide.service.FacultiesService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BuildingListActivity extends AppCompatActivity {
 
@@ -33,10 +38,10 @@ public class BuildingListActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         list.setLayoutManager(llm);
 
-        Building b1 = new Building("FI MUNI", "Bozetechova", "www.fi.muni.cz", "All the time", "Cannot tell");
-        Building b2 = new Building("FF MUNI", "Grohova", "www.phil.muni.cz", "All the time", "Cannot tell");
-        Building b3 = new Building("PrF MUNI", "Brno", "www.google.com", "Never", "Cannot tell");
-        list.setAdapter(new BuildingsAdapter(Arrays.asList(b1,b2,b3)));
+//        Building b1 = new Building("FI MUNI", "Bozetechova", "www.fi.muni.cz", "All the time", "Cannot tell");
+//        Building b2 = new Building("FF MUNI", "Grohova", "www.phil.muni.cz", "All the time", "Cannot tell");
+//        Building b3 = new Building("PrF MUNI", "Brno", "www.google.com", "Never", "Cannot tell");
+        list.setAdapter(new BuildingsAdapter(FacultiesService.getFaculties()));
     }
 
     protected void showDetail(Building b) {
