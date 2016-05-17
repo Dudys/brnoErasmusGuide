@@ -63,6 +63,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.BuildingListActivity"></activity>
+        <activity android:name=".activity.AccommodationListActivity"></activity>
     </application>
 
 </manifest>

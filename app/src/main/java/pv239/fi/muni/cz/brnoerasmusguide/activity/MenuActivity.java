@@ -55,7 +55,7 @@ public class MenuActivity extends AppCompatActivity
 
         Intent i;
         if (id == R.id.nav_accommodation) {
-            i = new Intent(MenuActivity.this, BuildingListActivity.class);
+            i = new Intent(MenuActivity.this, AccommodationListActivity.class);
         } else if (id == R.id.nav_canteen) {
             i = new Intent(MenuActivity.this, BuildingListActivity.class);
         } else if (id == R.id.nav_faculty) {
