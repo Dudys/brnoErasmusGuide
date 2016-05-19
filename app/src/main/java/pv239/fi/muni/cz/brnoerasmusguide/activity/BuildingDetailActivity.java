@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Faculty;
 
 /**
  * Created by Jakub Fiser on 4/14/2016.
@@ -28,6 +30,7 @@ import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 public class BuildingDetailActivity extends AppCompatActivity {
 
     public static final String BUILDING = "building";
+    public static final String WEB = "web";
 
     @Bind(R.id.buildingDetail_thumbnail) ImageView thumbnail;
     @Bind(R.id.bottom_action_sheet_persistent) RecyclerView details;
@@ -50,7 +53,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Get a Building object if presented (should always be)
+        // Get a Faculty object if presented (should always be)
         Intent i = getIntent();
         Building b = i.getParcelableExtra(BUILDING);
 
@@ -58,7 +61,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         details.setLayoutManager(llm);
 
-        details.setAdapter(new BuildingDetailAdapter(b));
+        details.setAdapter(new BuildingDetailAdapter(b, i.getStringExtra(WEB)));
     }
 
     /**
@@ -67,7 +70,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
     @OnClick(R.id.fab) protected void showMap() {
         Intent i = new Intent(BuildingDetailActivity.this, MapsActivity.class);
         startActivity(i);
-//        Log.d("BuildingDetail", "Should show map now.");
+        Log.d("BuildingDetail", "Should show map now.");
     }
 
     /**
@@ -75,11 +78,14 @@ public class BuildingDetailActivity extends AppCompatActivity {
      */
     public class BuildingDetailAdapter extends RecyclerView.Adapter<BuildingDetailAdapter.BuildingViewHolder> {
 
-        private List<Integer> icons = Arrays.asList(android.R.drawable.ic_menu_view, android.R.drawable.ic_menu_day, android.R.drawable.ic_dialog_info);
-        private List<String> strings;
+        private List<Integer> icons = Arrays.asList(android.R.drawable.ic_menu_view, android.R.drawable.ic_dialog_info);//, android.R.drawable.ic_menu_day);
+        private List<String> strings = new ArrayList<>();
 
-        public BuildingDetailAdapter(Building b) {
-            strings = Arrays.asList(b.web, b.openingHours, b.address);
+        public BuildingDetailAdapter(Building b, String web) {
+            if(b.web == null) {
+                strings.add(web);
+            }
+            strings.add(b.address);
         }
 
         @Override
@@ -91,9 +97,14 @@ public class BuildingDetailActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(BuildingViewHolder holder, int position) {
             String item = strings.get(position);
-            Integer image = icons.get(position);
+            if(position == 0) {
+                Integer image = icons.get(0);
+                holder.image.setImageResource(image);
+            } else {
+                Integer image = icons.get(1);
+                holder.image.setImageResource(image);
+            }
             holder.title.setText(item);
-            holder.image.setImageResource(image);
         }
 
         @Override
