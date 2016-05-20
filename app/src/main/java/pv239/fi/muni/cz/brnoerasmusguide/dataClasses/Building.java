@@ -12,7 +12,7 @@ public class Building implements Parcelable {
     public String name;
     public String address;
     public String web;
-    public String openingHours;
+    public String openHours;
     public String mhdInfo;
 
     /**
@@ -23,7 +23,7 @@ public class Building implements Parcelable {
         name = in.readString();
         address = in.readString();
         web = in.readString();
-        openingHours = in.readString();
+        openHours = in.readString();
         mhdInfo = in.readString();
     }
 
@@ -39,7 +39,7 @@ public class Building implements Parcelable {
         this.name = name;
         this.address = address;
         this.web = web;
-        this.openingHours = opening;
+        this.openHours = opening;
         this.mhdInfo = mhd;
     }
 
@@ -65,7 +65,7 @@ public class Building implements Parcelable {
         dest.writeString(name);
         dest.writeString(address);
         dest.writeString(web);
-        dest.writeString(openingHours);
+        dest.writeString(openHours);
         dest.writeString(mhdInfo);
     }
 }

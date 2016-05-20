@@ -22,16 +22,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Canteen;
 
 /**
- * Created by Jakub Fiser on 4/14/2016.
+ * Created by Jan Duda on 5/20/2016.
  */
-public class BuildingDetailActivity extends AppCompatActivity {
+public class CanteenDetailActivity extends AppCompatActivity {
 
-    public static final String BUILDING = "building";
+    public static final String CANTEEN = "canteen";
 
-    @Bind(R.id.buildingDetail_thumbnail) ImageView thumbnail;
-    @Bind(R.id.bottom_action_sheet_persistent) RecyclerView details;
+    @Bind(R.id.buildingDetail_thumbnail)
+    ImageView thumbnail;
+    @Bind(R.id.bottom_action_sheet_persistent)
+    RecyclerView details;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -51,50 +54,51 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Get a Faculty object if presented (should always be)
+        // Get a Canteen object if presented (should always be)
         Intent i = getIntent();
-        Building b = i.getParcelableExtra(BUILDING);
+        Canteen c = i.getParcelableExtra(CANTEEN);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         details.setLayoutManager(llm);
 
-        details.setAdapter(new BuildingDetailAdapter(b));
+        details.setAdapter(new CanteenDetailAdapter(c));
     }
 
     /**
      * FAB action.
      */
     @OnClick(R.id.fab) protected void showMap() {
-        Intent i = new Intent(BuildingDetailActivity.this, MapsActivity.class);
+        Intent i = new Intent(CanteenDetailActivity.this, MapsActivity.class);
         startActivity(i);
-        Log.d("BuildingDetail", "Should show map now.");
+        Log.d("CanteenDetail", "Should show map now.");
     }
 
     /**
      *  Adapter for list of information.
      */
-    public class BuildingDetailAdapter extends RecyclerView.Adapter<BuildingDetailAdapter.BuildingViewHolder> {
+    public class CanteenDetailAdapter extends RecyclerView.Adapter<CanteenDetailAdapter.CanteenViewHolder> {
 
         private List<Integer> icons = Arrays.asList(R.mipmap.ic_web_black_24dp, R.mipmap.ic_address_black_24dp,
                 R.mipmap.ic_mhd_info_black_24dp, R.mipmap.ic_open_hours_black_24dp);
+
         private List<String> strings = new ArrayList<>();
 
-        public BuildingDetailAdapter(Building b) {
-            strings.add(b.web);
-            strings.add(b.address);
-            strings.add(b.mhdInfo);
-            strings.add(b.openHours);
+        public CanteenDetailAdapter(Canteen c) {
+            strings.add(c.web);
+            strings.add(c.address);
+            strings.add(c.mhdInfo);
+            strings.add(c.openHours.get(0).hours);
         }
 
         @Override
-        public BuildingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public CanteenViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.icon_list_item, parent, false);
-            return new BuildingViewHolder(itemView);
+            return new CanteenViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(BuildingViewHolder holder, int position) {
+        public void onBindViewHolder(CanteenViewHolder holder, int position) {
             String item = strings.get(position);
             switch (position){
                 case 0:
@@ -118,12 +122,12 @@ public class BuildingDetailActivity extends AppCompatActivity {
             return strings.size();
         }
 
-        protected class BuildingViewHolder extends RecyclerView.ViewHolder {
+        protected class CanteenViewHolder extends RecyclerView.ViewHolder {
 
             protected TextView title;
             protected ImageView image;
 
-            public BuildingViewHolder(View v) {
+            public CanteenViewHolder(View v) {
                 super(v);
                 title = (TextView) v.findViewById(R.id.item_text);
                 image = (ImageView) v.findViewById(R.id.item_icon);

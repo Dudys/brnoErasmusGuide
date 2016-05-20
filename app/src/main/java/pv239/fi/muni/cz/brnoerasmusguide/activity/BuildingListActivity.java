@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Faculty;
-import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForFaculties;
+import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,7 +54,7 @@ public class BuildingListActivity extends AppCompatActivity {
 
         list.setLayoutManager(mLayoutManager);
 
-        ServiceApiForFaculties.get().getFaculties().enqueue(new Callback<List<Faculty>>() {
+        ServiceApiForBuldings.get().getFaculties().enqueue(new Callback<List<Faculty>>() {
             @Override
             public void onResponse(Call<List<Faculty>> call, Response<List<Faculty>> response) {
                 facultyAdapter = new FacultyAdapter(BuildingListActivity.this, response.body());
@@ -69,9 +69,9 @@ public class BuildingListActivity extends AppCompatActivity {
     }
 
     protected void showDetail(Building b, String web) {
+        b.web = web;
         Intent i = new Intent(this, BuildingDetailActivity.class);
         i.putExtra(BuildingDetailActivity.BUILDING, b);
-        i.putExtra(BuildingDetailActivity.WEB, web);
         startActivity(i);
     }
 
@@ -189,8 +189,8 @@ public class BuildingListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         int itemPosition = getAdapterPosition();
-                        int i = itemPosition-1;
-                        while(i >= 0 && facultyAdapter.getItemViewType(i) == TYPE_CHILD){
+                        int i = itemPosition - 1;
+                        while (i >= 0 && facultyAdapter.getItemViewType(i) == TYPE_CHILD) {
                             i--;
                         }
                         Faculty facultyOfBuilding = (Faculty) ((ParentWrapper) facultyAdapter.getListItem(i)).getParentListItem();

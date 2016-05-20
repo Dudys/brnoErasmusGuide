@@ -81,7 +81,7 @@ public class AccommodationListActivity extends AppCompatActivity {
 
         @Override
         public BuildingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_text_for_building, parent, false);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -110,7 +110,7 @@ public class AccommodationListActivity extends AppCompatActivity {
 
             public BuildingViewHolder(View v) {
                 super(v);
-                title = (TextView) v.findViewById(android.R.id.text1);
+                title = (TextView) v.findViewById(R.id.title_of_building);
             }
         }
     }

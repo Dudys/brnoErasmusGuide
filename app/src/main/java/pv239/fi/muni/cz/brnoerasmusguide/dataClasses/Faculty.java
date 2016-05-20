@@ -78,7 +78,7 @@ public class Faculty implements Parcelable, ParentListItem {
 //    public static class BuildingOfFac implements Parcelable {
 //        public String name;
 //        public String address;
-//        public String openingHours;
+//        public String openHours;
 //        public String mhdInfo;
 //
 //        /**
@@ -87,7 +87,7 @@ public class Faculty implements Parcelable, ParentListItem {
 //         */
 //        protected BuildingOfFac(Parcel in) {
 //            address = in.readString();
-//            openingHours = in.readString();
+//            openHours = in.readString();
 //            mhdInfo = in.readString();
 //        }
 //
@@ -111,7 +111,7 @@ public class Faculty implements Parcelable, ParentListItem {
 //        @Override
 //        public void writeToParcel(Parcel dest, int flags) {
 //            dest.writeString(address);
-//            dest.writeString(openingHours);
+//            dest.writeString(openHours);
 //            dest.writeString(mhdInfo);
 //        }
 //    }

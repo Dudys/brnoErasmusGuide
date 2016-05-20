@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Canteen;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_accommodation) {
             i = new Intent(this, AccommodationListActivity.class);
         } else if (id == R.id.nav_canteen) {
-            i = new Intent(this, BuildingListActivity.class);
+            i = new Intent(this, CanteenListActivity.class);
         } else if (id == R.id.nav_faculty) {
             i = new Intent(this, BuildingListActivity.class);
         } else if (id == R.id.nav_event) {
