@@ -78,7 +78,7 @@ public class BuildingListActivity extends AppCompatActivity {
     /**
      *  Adapter for list of information.
      */
-    // POMOCI BIG NERD RANCH
+    // ExpandableRecyclerAdapter from BIG NERD RANCH
     public class FacultyAdapter extends ExpandableRecyclerAdapter<FacultyAdapter.FacultyViewHolder, FacultyAdapter.BuildingViewHolder> {
         private LayoutInflater mInflator;
 
@@ -164,6 +164,8 @@ public class BuildingListActivity extends AppCompatActivity {
             public void bind(Faculty faculty) {
                 if(isExpanded()){
                     expand();
+                } else {
+                    collapse();
                 }
                 facultyName.setText(faculty.name);
             }
