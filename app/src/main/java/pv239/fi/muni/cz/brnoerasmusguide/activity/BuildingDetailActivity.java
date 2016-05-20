@@ -22,7 +22,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
-import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Faculty;
 
 /**
  * Created by Jakub Fiser on 4/14/2016.
