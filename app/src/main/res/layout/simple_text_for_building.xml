@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:weightSum="1"
+    android:clickable="true" >
+
+    <TextView
+        android:id="@+id/title_of_building"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:text="text"
+        android:gravity="left|center"
+        android:textSize="16sp"
+        android:textColor="#212121"
+        android:layout_alignParentLeft="true" />
+
+</RelativeLayout>
