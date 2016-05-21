@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -76,11 +77,24 @@ public class EventsActivity extends AppCompatActivity {
     };
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_events);
         ButterKnife.bind(this);
+
+        getSupportActionBar().setTitle("Events");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mLoginButton = (LoginButton) findViewById(R.id.login_button);
         mCallbackManager = CallbackManager.Factory.create();

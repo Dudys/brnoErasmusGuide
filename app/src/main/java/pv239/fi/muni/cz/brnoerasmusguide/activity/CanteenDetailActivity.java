@@ -56,6 +56,7 @@ public class CanteenDetailActivity extends AppCompatActivity {
         Intent i = getIntent();
         Canteen c = i.getParcelableExtra(CANTEEN);
 
+        getSupportActionBar().setTitle(c.name);
         web.setText(c.web);
         address.setText(c.address);
         mhd.setText(c.mhdInfo);
