@@ -33,6 +33,8 @@ public class BuildingDetailActivity extends AppCompatActivity {
     @Bind(R.id.buildingDetail_thumbnail) ImageView thumbnail;
     @Bind(R.id.bottom_action_sheet_persistent) RecyclerView details;
 
+    private Building b;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -53,7 +55,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
         // Get a Faculty object if presented (should always be)
         Intent i = getIntent();
-        Building b = i.getParcelableExtra(BUILDING);
+        b = i.getParcelableExtra(BUILDING);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -67,6 +69,8 @@ public class BuildingDetailActivity extends AppCompatActivity {
      */
     @OnClick(R.id.fab) protected void showMap() {
         Intent i = new Intent(BuildingDetailActivity.this, MapsActivity.class);
+        i.putExtra(MapsActivity.ADDRESS, b.address);
+        i.putExtra(MapsActivity.NAME, b.name);
         startActivity(i);
         Log.d("BuildingDetail", "Should show map now.");
     }

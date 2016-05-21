@@ -34,6 +34,8 @@ public class CanteenDetailActivity extends AppCompatActivity {
     @Bind(R.id.hours_text_view)
     TextView hours;
 
+    private Canteen c;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -54,7 +56,7 @@ public class CanteenDetailActivity extends AppCompatActivity {
 
         // Get a Canteen object if presented (should always be)
         Intent i = getIntent();
-        Canteen c = i.getParcelableExtra(CANTEEN);
+        c = i.getParcelableExtra(CANTEEN);
 
         getSupportActionBar().setTitle(c.name);
         web.setText(c.web);
@@ -73,6 +75,8 @@ public class CanteenDetailActivity extends AppCompatActivity {
      */
     @OnClick(R.id.fab) protected void showMap() {
         Intent i = new Intent(CanteenDetailActivity.this, MapsActivity.class);
+        i.putExtra(MapsActivity.ADDRESS, c.address);
+        i.putExtra(MapsActivity.NAME, c.name);
         startActivity(i);
         Log.d("CanteenDetail", "Should show map now.");
     }
