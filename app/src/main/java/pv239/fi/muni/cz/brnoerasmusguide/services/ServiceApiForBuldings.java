@@ -48,5 +48,8 @@ public class ServiceApiForBuldings {
 
         @GET("canteens.json")
         Call<List<Building>> getCanteens();
+
+        @GET("dorms.json")
+        Call<List<Building>> getDormitories();
     }
 }

@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
+import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,8 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 
 public class AccommodationsFragment extends Fragment {
-
-    private static final String ACCOMMODATION_URL = "https://is.muni.cz/www/396035/63281828/";
 
     @Bind(R.id.building_list) RecyclerView list;
 
@@ -74,12 +73,7 @@ public class AccommodationsFragment extends Fragment {
     }
 
     private void loadJSON() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ACCOMMODATION_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ServerService request = retrofit.create(ServerService.class);
-        Call<List<Building>> call = request.getBuildings();
+        Call<List<Building>> call = ServiceApiForBuldings.get().getDormitories();
         call.enqueue(new Callback<List<Building>>() {
             @Override
             public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
@@ -140,10 +134,5 @@ public class AccommodationsFragment extends Fragment {
                 title = (TextView) v.findViewById(R.id.title_of_building);
             }
         }
-    }
-
-    public interface ServerService {
-        @GET("dorms.json")
-        Call<List<Building>> getBuildings();
     }
 }
