@@ -30,8 +30,22 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
     public static final String BUILDING = "building";
 
-    @Bind(R.id.buildingDetail_thumbnail) ImageView thumbnail;
-    @Bind(R.id.bottom_action_sheet_persistent) RecyclerView details;
+    @Bind(R.id.buildingDetail_thumbnail)
+    ImageView thumbnail;
+    @Bind(R.id.web_text_view)
+    TextView web;
+    @Bind(R.id.address_text_view)
+    TextView address;
+    @Bind(R.id.mhd_text_view)
+    TextView mhd;
+    @Bind(R.id.days_text_view)
+    TextView days;
+    @Bind(R.id.hours_text_view)
+    TextView hours;
+    @Bind(R.id.days2_text_view)
+    TextView days2;
+    @Bind(R.id.hours2_text_view)
+    TextView hours2;
 
     private Building b;
 
@@ -53,15 +67,27 @@ public class BuildingDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Get a Faculty object if presented (should always be)
+        // Get a Building object if presented (should always be)
         Intent i = getIntent();
         b = i.getParcelableExtra(BUILDING);
 
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        details.setLayoutManager(llm);
-
-        details.setAdapter(new BuildingDetailAdapter(b));
+        if(b.name.equals("")){
+            getSupportActionBar().setTitle("Detail of building");
+        } else {
+            getSupportActionBar().setTitle(b.name);
+        }
+        web.setText(b.web);
+        address.setText(b.address);
+        mhd.setText(b.mhdInfo);
+        days.setText(b.openHours.get(0).weekdays);
+        hours.setText(b.openHours.get(0).hours);
+        if(b.openHours.size() == 2){
+            days2.setText(b.openHours.get(1).weekdays);
+            hours2.setText(b.openHours.get(1).hours);
+        } else {
+            days2.setVisibility(View.INVISIBLE);
+            hours2.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -70,68 +96,12 @@ public class BuildingDetailActivity extends AppCompatActivity {
     @OnClick(R.id.fab) protected void showMap() {
         Intent i = new Intent(BuildingDetailActivity.this, MapsActivity.class);
         i.putExtra(MapsActivity.ADDRESS, b.address);
-        i.putExtra(MapsActivity.NAME, b.name);
+        if(b.name.equals("")){
+            i.putExtra(MapsActivity.NAME, b.address);
+        } else {
+            i.putExtra(MapsActivity.NAME, b.name);
+        }
         startActivity(i);
         Log.d("BuildingDetail", "Should show map now.");
-    }
-
-    /**
-     *  Adapter for list of information.
-     */
-    public class BuildingDetailAdapter extends RecyclerView.Adapter<BuildingDetailAdapter.BuildingViewHolder> {
-
-        private List<Integer> icons = Arrays.asList(R.mipmap.ic_web_black_24dp, R.mipmap.ic_address_black_24dp,
-                R.mipmap.ic_mhd_info_black_24dp, R.mipmap.ic_open_hours_black_24dp);
-        private List<String> strings = new ArrayList<>();
-
-        public BuildingDetailAdapter(Building b) {
-            strings.add(b.web);
-            strings.add(b.address);
-            strings.add(b.mhdInfo);
-            strings.add(b.openHours);
-        }
-
-        @Override
-        public BuildingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.icon_list_item, parent, false);
-            return new BuildingViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(BuildingViewHolder holder, int position) {
-            String item = strings.get(position);
-            switch (position){
-                case 0:
-                    holder.image.setImageResource(icons.get(0));
-                    break;
-                case 1:
-                    holder.image.setImageResource(icons.get(1));
-                    break;
-                case 2:
-                    holder.image.setImageResource(icons.get(2));
-                    break;
-                case 3:
-                    holder.image.setImageResource(icons.get(3));
-                    break;
-            }
-            holder.title.setText(item);
-        }
-
-        @Override
-        public int getItemCount() {
-            return strings.size();
-        }
-
-        protected class BuildingViewHolder extends RecyclerView.ViewHolder {
-
-            protected TextView title;
-            protected ImageView image;
-
-            public BuildingViewHolder(View v) {
-                super(v);
-                title = (TextView) v.findViewById(R.id.item_text);
-                image = (ImageView) v.findViewById(R.id.item_icon);
-            }
-        }
     }
 }

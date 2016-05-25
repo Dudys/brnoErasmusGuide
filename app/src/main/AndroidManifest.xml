@@ -58,7 +58,6 @@
         <activity android:name=".activity.BuildingListActivity" />
         <activity android:name=".activity.AccommodationListActivity" />
         <activity android:name=".activity.CanteenListActivity" />
-        <activity android:name=".activity.CanteenDetailActivity" />
     </application>
 
 </manifest>

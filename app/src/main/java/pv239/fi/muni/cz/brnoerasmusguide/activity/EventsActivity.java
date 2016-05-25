@@ -149,11 +149,12 @@ public class EventsActivity extends AppCompatActivity {
         if(profile != null) {
             Log.d("EventsActivity", "Welcome " + profile.getName());
             eventList.setAdapter(new EventAdapter());
+            TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
             if (eventList.getChildCount() == 0){
-                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
                 message.setText("Not found any events from Erasmus Facebook group and ISC MU Brno page!");
                 mLoginButton.setVisibility(View.INVISIBLE);
             } else {
+                message.setVisibility(View.INVISIBLE);
                 fbPrompt.setVisibility(View.INVISIBLE);
             }
         }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Canteen;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Faculty;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -47,6 +47,6 @@ public class ServiceApiForBuldings {
         Call<List<Faculty>> getFaculties();
 
         @GET("canteens.json")
-        Call<List<Canteen>> getCanteens();
+        Call<List<Building>> getCanteens();
     }
 }

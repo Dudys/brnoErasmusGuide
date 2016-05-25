@@ -16,7 +16,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
-import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Canteen;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,15 +52,15 @@ public class CanteenListActivity extends AppCompatActivity {
 
         list.setLayoutManager(mLayoutManager);
 
-        ServiceApiForBuldings.get().getCanteens().enqueue(new Callback<List<Canteen>>() {
+        ServiceApiForBuldings.get().getCanteens().enqueue(new Callback<List<Building>>() {
             @Override
-            public void onResponse(Call<List<Canteen>> call, Response<List<Canteen>> response) {
+            public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
                 canteenAdapter = new CanteenAdapter(response.body());
                 list.setAdapter(canteenAdapter);
             }
 
             @Override
-            public void onFailure(Call<List<Canteen>> call, Throwable throwable) {
+            public void onFailure(Call<List<Building>> call, Throwable throwable) {
 
             }
         });
@@ -68,9 +68,9 @@ public class CanteenListActivity extends AppCompatActivity {
 
     public class CanteenAdapter extends RecyclerView.Adapter<CanteenAdapter.CanteenViewHolder> {
 
-        private List<Canteen> canteens;
+        private List<Building> canteens;
 
-        public CanteenAdapter(List<Canteen> canteens) {
+        public CanteenAdapter(List<Building> canteens) {
             this.canteens = canteens;
         }
 
@@ -81,7 +81,7 @@ public class CanteenListActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     int itemPosition = list.getChildAdapterPosition(view);
-                    Canteen b = canteens.get(itemPosition);
+                    Building b = canteens.get(itemPosition);
                     showDetail(b);
                 }
             });
@@ -90,7 +90,7 @@ public class CanteenListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(CanteenViewHolder holder, int position) {
-            Canteen item = canteens.get(position);
+            Building item = canteens.get(position);
             holder.title.setText(item.name);
         }
 
@@ -110,9 +110,9 @@ public class CanteenListActivity extends AppCompatActivity {
         }
     }
 
-    protected void showDetail(Canteen b) {
-        Intent i = new Intent(this, CanteenDetailActivity.class);
-        i.putExtra(CanteenDetailActivity.CANTEEN, b);
+    protected void showDetail(Building b) {
+        Intent i = new Intent(this, BuildingDetailActivity.class);
+        i.putExtra(BuildingDetailActivity.BUILDING, b);
         startActivity(i);
     }
 }
