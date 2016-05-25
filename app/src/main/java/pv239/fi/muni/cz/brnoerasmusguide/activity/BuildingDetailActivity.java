@@ -1,6 +1,7 @@
 package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -100,13 +101,21 @@ public class BuildingDetailActivity extends AppCompatActivity {
         Log.d("BuildingDetail", "Should show map now.");
     }
 
-    private void loadImage(String url){
+    private void loadImage(String url) {
         Picasso.with(BuildingDetailActivity.this)
                 .load(url)
                 .placeholder(R.mipmap.building_placeholder_lazyload)
                 .error(R.mipmap.building_placeholder_error)
-                .resize(480,270)
+                .resize(480, 270)
                 .centerCrop()
                 .into(thumbnail);
+    }
+
+    public void openLink(View v) {
+        String url = web.getText().toString();
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 }

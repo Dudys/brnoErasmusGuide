@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BrnoErasmusGuide</string>
+    <string name="app_name">Brno Erasmus Guide</string>
     <string name="eventsButtonText">Events</string>
     <string name="facebook_app_id">573425292833632</string>
     <string name="fb_login_protocol_scheme">fb573425292833632</string>
@@ -17,7 +17,5 @@
     <string name="accommodation">Dormitories</string>
     <string name="section_buildings">Find building</string>
     <string name="facebook_prompt">Please login to your facebook account to see any events.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_message">Welcome in Brno Erasmus Guide! This application has been created as a school project and will be further developed.</string>
 </resources>

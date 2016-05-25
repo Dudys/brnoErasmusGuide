@@ -19,6 +19,7 @@ import pv239.fi.muni.cz.brnoerasmusguide.fragment.AccommodationsFragment;
 import pv239.fi.muni.cz.brnoerasmusguide.fragment.CanteensFragment;
 import pv239.fi.muni.cz.brnoerasmusguide.fragment.EventsFragment;
 import pv239.fi.muni.cz.brnoerasmusguide.fragment.FacultiesFragment;
+import pv239.fi.muni.cz.brnoerasmusguide.fragment.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(mainContainer.getId(), new WelcomeFragment()).commit();
     }
 
     @Override
