@@ -1,7 +1,8 @@
 package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
-import android.content.Intent;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -9,15 +10,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.fragment.AccommodationsFragment;
+import pv239.fi.muni.cz.brnoerasmusguide.fragment.CanteensFragment;
+import pv239.fi.muni.cz.brnoerasmusguide.fragment.EventsFragment;
+import pv239.fi.muni.cz.brnoerasmusguide.fragment.FacultiesFragment;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    @Bind(R.id.main_container) FrameLayout mainContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -47,21 +58,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        Intent i;
+        Fragment f;
+        int title;
         if (id == R.id.nav_accommodation) {
-            i = new Intent(this, AccommodationListActivity.class);
+            f = new AccommodationsFragment();
+            title = R.string.accommodation;
         } else if (id == R.id.nav_canteen) {
-            i = new Intent(this, CanteenListActivity.class);
+            f = new CanteensFragment();
+            title = R.string.canteens;
         } else if (id == R.id.nav_faculty) {
-            i = new Intent(this, BuildingListActivity.class);
+            f = new FacultiesFragment();
+            title = R.string.faculties;
         } else if (id == R.id.nav_event) {
-            i = new Intent(this, EventsActivity.class);
+            f = new EventsFragment();
+            title = R.string.events;
         }
         else {
             return false;
         }
-        startActivity(i);
 
+        getSupportActionBar().setTitle(title);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(mainContainer.getId(), f).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

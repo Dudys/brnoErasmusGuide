@@ -1,7 +1,10 @@
-package pv239.fi.muni.cz.brnoerasmusguide.activity;
+package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,39 +27,48 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 
-public class AccommodationListActivity extends AppCompatActivity {
+public class AccommodationsFragment extends Fragment {
 
-    @Bind(R.id.building_list) RecyclerView list;
-    private BuildingsAdapter adapter;
     private static final String ACCOMMODATION_URL = "https://is.muni.cz/www/396035/63281828/";
 
+    @Bind(R.id.building_list) RecyclerView list;
+
+    private BuildingsAdapter adapter;
+    private Context context;
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building_list);
-        ButterKnife.bind(this);
+    public void onDetach() {
+        super.onDetach();
+        context = null;
+    }
 
-        getSupportActionBar().setTitle("Dormitories");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_faculty_list, container, false);
+        ButterKnife.bind(this, v);
+        return v;
+    }
 
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         list.setLayoutManager(llm);
         loadJSON();
     }
 
     protected void showDetail(Building b) {
-        Intent i = new Intent(this, BuildingDetailActivity.class);
+        Intent i = new Intent(context, BuildingDetailActivity.class);
         i.putExtra(BuildingDetailActivity.BUILDING, b);
         startActivity(i);
     }

@@ -1,13 +1,14 @@
-package pv239.fi.muni.cz.brnoerasmusguide.activity;
+package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -43,19 +44,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EventsActivity extends AppCompatActivity {
+public class EventsFragment extends Fragment {
 
     private static final String[] ERASMUS_GROUP_ID = {"1652673088347828", "11480938751"};
 
     @Bind(R.id.event_list) RecyclerView eventList;
     @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
+    @Bind(R.id.login_button) LoginButton mLoginButton;
 
+    private Context appContext;
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
-
-    private LoginButton mLoginButton;
-
     private FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
@@ -77,28 +77,36 @@ public class EventsActivity extends AppCompatActivity {
     };
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_events, container, false);
+        ButterKnife.bind(this, v);
+        return v;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.appContext = context;
         FacebookSdk.sdkInitialize(getApplicationContext());
-        setContentView(R.layout.activity_events);
-        ButterKnife.bind(this);
+    }
 
-        getSupportActionBar().setTitle("Events");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        appContext = null;
+    }
 
-        mLoginButton = (LoginButton) findViewById(R.id.login_button);
+    private Context getApplicationContext() {
+        return appContext;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         mCallbackManager = CallbackManager.Factory.create();
-
         mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "user_events", "user_managed_groups"));
         mLoginButton.registerCallback(mCallbackManager, mCallback);
 
@@ -119,7 +127,7 @@ public class EventsActivity extends AppCompatActivity {
         mProfileTracker.startTracking();
         // AppEventsLogger.activateApp(this);
 
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         eventList.setLayoutManager(llm);
     }
@@ -164,8 +172,7 @@ public class EventsActivity extends AppCompatActivity {
 
         private List<Event> events = new ArrayList<>();
 
-        public EventAdapter(){
-
+        public EventAdapter() {
             for (String groupId : ERASMUS_GROUP_ID) {
                 GraphRequest request = GraphRequest.newGraphPathRequest(
                         AccessToken.getCurrentAccessToken(),

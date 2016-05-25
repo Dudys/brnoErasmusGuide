@@ -1,6 +1,9 @@
-package pv239.fi.muni.cz.brnoerasmusguide.activity;
+package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,39 +19,47 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CanteenListActivity extends AppCompatActivity {
-
-    private RecyclerView.LayoutManager mLayoutManager;
+public class CanteensFragment extends Fragment {
 
     @Bind(R.id.building_list) RecyclerView list;
+
+    private RecyclerView.LayoutManager mLayoutManager;
+    private Context context;
     protected CanteenAdapter canteenAdapter;
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building_list);
-        ButterKnife.bind(this);
+    public void onDetach() {
+        super.onDetach();
+        context = null;
+    }
 
-        getSupportActionBar().setTitle("Canteens");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_faculty_list, container, false);
+        ButterKnife.bind(this, v);
+        return v;
+    }
 
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
 
         list.setLayoutManager(mLayoutManager);
 
@@ -111,7 +122,7 @@ public class CanteenListActivity extends AppCompatActivity {
     }
 
     protected void showDetail(Building b) {
-        Intent i = new Intent(this, BuildingDetailActivity.class);
+        Intent i = new Intent(context, BuildingDetailActivity.class);
         i.putExtra(BuildingDetailActivity.BUILDING, b);
         startActivity(i);
     }
