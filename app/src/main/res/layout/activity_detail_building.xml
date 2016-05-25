@@ -18,8 +18,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_aspectRatio="178%"
-            app:layout_widthPercent="100%"
-            android:src="@mipmap/building_base_image_thumbnail"/>
+            app:layout_widthPercent="100%"/>
+
 
         <ImageView
             android:id="@+id/web_image_view"

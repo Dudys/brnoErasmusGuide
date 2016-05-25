@@ -88,8 +88,9 @@ public class FacultiesFragment extends Fragment {
         });
     }
 
-    protected void showDetail(Building b, String web) {
+    protected void showDetail(Building b, String web, String image) {
         b.web = web;
+        b.image = image;
         Intent i = new Intent(context, BuildingDetailActivity.class);
         i.putExtra(BuildingDetailActivity.BUILDING, b);
         startActivity(i);
@@ -215,7 +216,7 @@ public class FacultiesFragment extends Fragment {
                         }
                         Faculty facultyOfBuilding = (Faculty) ((ParentWrapper) facultyAdapter.getListItem(i)).getParentListItem();
                         Building building = facultyOfBuilding.buildings.get(itemPosition - i - 1);
-                        showDetail(building, facultyOfBuilding.web);
+                        showDetail(building, facultyOfBuilding.web, facultyOfBuilding.image);
                     }
                 });
             }

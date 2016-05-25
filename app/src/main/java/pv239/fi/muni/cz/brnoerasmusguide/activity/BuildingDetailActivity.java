@@ -3,19 +3,13 @@ package pv239.fi.muni.cz.brnoerasmusguide.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -76,6 +70,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
         } else {
             getSupportActionBar().setTitle(b.name);
         }
+        loadImage(b.image);
         web.setText(b.web);
         address.setText(b.address);
         mhd.setText(b.mhdInfo);
@@ -103,5 +98,15 @@ public class BuildingDetailActivity extends AppCompatActivity {
         }
         startActivity(i);
         Log.d("BuildingDetail", "Should show map now.");
+    }
+
+    private void loadImage(String url){
+        Picasso.with(BuildingDetailActivity.this)
+                .load(url)
+                .placeholder(R.mipmap.building_placeholder_lazyload)
+                .error(R.mipmap.building_placeholder_error)
+                .resize(480,270)
+                .centerCrop()
+                .into(thumbnail);
     }
 }
