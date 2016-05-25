@@ -16,6 +16,7 @@ public class Faculty implements Parcelable, ParentListItem {
 
     public String name;
     public String web;
+    public String image;
     public List<Building> buildings;
 
     /**
@@ -25,6 +26,7 @@ public class Faculty implements Parcelable, ParentListItem {
     protected Faculty(Parcel in) {
         name = in.readString();
         web = in.readString();
+        image = in.readString();
         buildings = new ArrayList<>();
         in.readTypedList(buildings, Building.CREATOR);
     }
@@ -38,6 +40,7 @@ public class Faculty implements Parcelable, ParentListItem {
     public Faculty(String name, String web, List<Building> buildings) {
         this.name = name;
         this.web = web;
+        this.image = image;
         this.buildings = buildings;
     }
 
@@ -62,6 +65,7 @@ public class Faculty implements Parcelable, ParentListItem {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(web);
+        dest.writeString(image);
         dest.writeTypedList(buildings);
     }
 

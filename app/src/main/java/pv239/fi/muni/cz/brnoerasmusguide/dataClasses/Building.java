@@ -15,6 +15,7 @@ public class Building implements Parcelable {
     public String name;
     public String address;
     public String web;
+    public String image;
     public List<OpenHours> openHours;
     public String mhdInfo;
 
@@ -26,6 +27,7 @@ public class Building implements Parcelable {
         name = in.readString();
         address = in.readString();
         web = in.readString();
+        image = in.readString();
         openHours = new ArrayList<>();
         in.readTypedList(openHours, OpenHours.CREATOR);
         mhdInfo = in.readString();
@@ -39,10 +41,11 @@ public class Building implements Parcelable {
      * @param openHours List containing opening hours.
      * @param mhd String containing information about bus stop nearby.
      */
-    public Building(String name, String address, String web, List<OpenHours> openHours, String mhd) {
+    public Building(String name, String address, String web, String image, List<OpenHours> openHours, String mhd) {
         this.name = name;
         this.address = address;
         this.web = web;
+        this.image = image;
         this.openHours = openHours;
         this.mhdInfo = mhd;
     }
@@ -69,6 +72,7 @@ public class Building implements Parcelable {
         dest.writeString(name);
         dest.writeString(address);
         dest.writeString(web);
+        dest.writeString(image);
         dest.writeTypedList(openHours);
         dest.writeString(mhdInfo);
     }
