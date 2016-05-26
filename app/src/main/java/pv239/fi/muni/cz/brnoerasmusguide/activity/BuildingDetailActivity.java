@@ -104,7 +104,7 @@ public class BuildingDetailActivity extends AppCompatActivity {
     private void loadImage(String url) {
         Picasso.with(BuildingDetailActivity.this)
                 .load(url)
-                .placeholder(R.mipmap.building_placeholder_lazyload)
+                .placeholder(R.mipmap.building_placeholder_error)
                 .error(R.mipmap.building_placeholder_error)
                 .resize(480, 270)
                 .centerCrop()
