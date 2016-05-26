@@ -52,6 +52,7 @@ public class CanteensFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_faculty_list, container, false);
         ButterKnife.bind(this, v);
+        list.addItemDecoration(new DividerItemDecorator(context));
         return v;
     }
 
