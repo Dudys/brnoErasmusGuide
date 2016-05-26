@@ -30,6 +30,7 @@ import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Faculty;
 import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
+import pv239.fi.muni.cz.brnoerasmusguide.services.StorageManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,6 +41,7 @@ public class FacultiesFragment extends Fragment {
 
     private static final int TYPE_PARENT = 0;
     private static final int TYPE_CHILD = 1;
+    private static final String JSON_KEY = "faculty_json_key";
 
     private RecyclerView.LayoutManager mLayoutManager;
     protected Context context;
@@ -76,14 +78,24 @@ public class FacultiesFragment extends Fragment {
 
         ServiceApiForBuldings.get().getFaculties().enqueue(new Callback<List<Faculty>>() {
             @Override
-            public void onResponse(Call<List<Faculty>> call, Response<List<Faculty>> response) {
-                facultyAdapter = new FacultyAdapter(context, response.body());
+            public void onResponse(Call<List<Faculty>> call, final Response<List<Faculty>> response) {
+
+                if(response.isSuccessful()) {
+                    StorageManager.saveFaculties(JSON_KEY, response.body(), context);
+                    facultyAdapter = new FacultyAdapter(context, response.body());
+                } else {
+                    List<Faculty> fl = StorageManager.loadFaculties(JSON_KEY, context);
+                    facultyAdapter = new FacultyAdapter(context, fl);
+                }
                 list.setAdapter(facultyAdapter);
             }
 
             @Override
             public void onFailure(Call<List<Faculty>> call, Throwable throwable) {
 
+                List<Faculty> fl = StorageManager.loadFaculties(JSON_KEY, context);
+                facultyAdapter = new FacultyAdapter(context, fl);
+                list.setAdapter(facultyAdapter);
             }
         });
     }

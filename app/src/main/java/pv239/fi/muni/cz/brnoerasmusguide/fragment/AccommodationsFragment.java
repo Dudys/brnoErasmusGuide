@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,17 +19,16 @@ import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
+import pv239.fi.muni.cz.brnoerasmusguide.services.StorageManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
 
 public class AccommodationsFragment extends Fragment {
 
     @Bind(R.id.building_list) RecyclerView list;
 
+    private static final String JSON_KEY = "dormitories_json_key";
     private BuildingsAdapter adapter;
     private Context context;
 
@@ -78,13 +75,22 @@ public class AccommodationsFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
 
-                List<Building> buildingsResponse = response.body();
-                adapter = new BuildingsAdapter(buildingsResponse);
+                if(response.isSuccessful()) {
+                    StorageManager.saveBuildings(JSON_KEY, response.body(), context);
+                    adapter = new BuildingsAdapter(response.body());
+                } else {
+                    List<Building> bl = StorageManager.loadBuildings(JSON_KEY, context);
+                    adapter = new BuildingsAdapter(bl);
+                }
                 list.setAdapter(adapter);
             }
 
             @Override
             public void onFailure(Call<List<Building>> call, Throwable t) {
+
+                List<Building> bl = StorageManager.loadBuildings(JSON_KEY, context);
+                adapter = new BuildingsAdapter(bl);
+                list.setAdapter(adapter);
             }
         });
     }
