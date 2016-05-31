@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
@@ -24,6 +26,11 @@ import pv239.fi.muni.cz.brnoerasmusguide.fragment.WelcomeFragment;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     @Bind(R.id.main_container) FrameLayout mainContainer;
+
+    private Fragment currentFragment;
+    private boolean showFilter = false;
+    private int lastCheckedMenu = 0;
+    private Menu actualMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(mainContainer.getId(), new WelcomeFragment()).commit();
+        currentFragment = new WelcomeFragment();
+        ft.replace(mainContainer.getId(), currentFragment).commit();
     }
 
     @Override
@@ -56,26 +64,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        menu.getItem(0).getSubMenu().getItem(0).setChecked(true);
+        actualMenu = menu;
+        return showFilter;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.filter_all || id == R.id.filter_future || id == R.id.filter_past) {
+            actualMenu.getItem(0).getSubMenu().getItem(lastCheckedMenu).setChecked(false);
+            lastCheckedMenu = (id == R.id.filter_all ? 0 : (id == R.id.filter_future ? 1 : 2));
+            item.setChecked(true);
+            ((EventsFragment)currentFragment).filterHasChanged(id);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        Fragment f;
         int title;
+        showFilter = false;
         if (id == R.id.nav_accommodation) {
-            f = new AccommodationsFragment();
+            currentFragment = new AccommodationsFragment();
             title = R.string.accommodation;
         } else if (id == R.id.nav_canteen) {
-            f = new CanteensFragment();
+            currentFragment = new CanteensFragment();
             title = R.string.canteens;
         } else if (id == R.id.nav_faculty) {
-            f = new FacultiesFragment();
+            currentFragment = new FacultiesFragment();
             title = R.string.faculties;
         } else if (id == R.id.nav_event) {
-            f = new EventsFragment();
+            currentFragment = new EventsFragment();
             title = R.string.events;
+            showFilter = true;
         }
         else {
             return false;
@@ -83,9 +112,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getSupportActionBar().setTitle(title);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(mainContainer.getId(), f).commit();
+        ft.replace(mainContainer.getId(), currentFragment).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        invalidateOptionsMenu();
         return true;
     }
 }

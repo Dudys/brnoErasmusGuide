@@ -5,5 +5,23 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:icon="@mipmap/ic_filter_list_white_24dp"
+        app:showAsAction="always" >
+
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/filter_all"
+                    android:title="All" />
+                <item
+                    android:id="@+id/filter_future"
+                    android:title="Upcoming" />
+                <item
+                    android:id="@+id/filter_past"
+                    android:title="Past" />
+            </group>
+
+        </menu>
+
+    </item>
 </menu>

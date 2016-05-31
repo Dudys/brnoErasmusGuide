@@ -36,17 +36,22 @@ import com.facebook.login.widget.LoginButton;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class EventsFragment extends Fragment {
 
     private static final String[] ERASMUS_GROUP_ID = {"1652673088347828", "11480938751"};
+    private static final int FILTER_ALL = R.id.filter_all;
+    private static final int FILTER_FUTURE = R.id.filter_future;
+    private static final int FILTER_PAST = R.id.filter_past;
 
     @Bind(R.id.event_list) RecyclerView eventList;
     @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
@@ -168,9 +173,14 @@ public class EventsFragment extends Fragment {
         }
     }
 
+    public void filterHasChanged(int option) {
+        ((EventAdapter)eventList.getAdapter()).filterChanged(option);
+    }
+
     private class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
         private List<Event> events = new ArrayList<>();
+        private List<Event> displayedEvents = new ArrayList<>();
 
         public EventAdapter() {
             for (String groupId : ERASMUS_GROUP_ID) {
@@ -186,15 +196,16 @@ public class EventsFragment extends Fragment {
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         try {
                                             final Event e = new Event(jsonArray.getJSONObject(i));
-                                            if (!events.contains(e) && e.startTime.isAfter(DateTime.now().minusDays(1))) {
+                                            if (!events.contains(e)) {
                                                 events.add(e);
                                                 Log.d("EventAdapter", "Event added");
-                                                notifyDataSetChanged();
                                             }
                                         } catch (JSONException e) {
                                             Log.d("Error", "when getting " + i + ". item from json!");
                                         }
                                     }
+                                    displayedEvents.addAll(events);
+                                    notifyDataSetChanged();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -207,6 +218,21 @@ public class EventsFragment extends Fragment {
             }
         }
 
+        public void filterChanged(int options) {
+            displayedEvents.clear();
+            DateTime now = DateTime.now();
+            for(Event e : events) {
+                if(options == FILTER_ALL) {
+                    displayedEvents.add(e);
+                } else if(options == FILTER_FUTURE && e.startTime.isAfter(now.minusDays(1))) {
+                    displayedEvents.add(e);
+                } else if(options == FILTER_PAST && !e.startTime.isAfter(now.minusDays(1))) {
+                    displayedEvents.add(e);
+                }
+            }
+            notifyDataSetChanged();
+        }
+
         @Override
         public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_card, parent, false);
@@ -215,7 +241,7 @@ public class EventsFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(EventViewHolder holder, int position) {
-            Event e = events.get(position);
+            Event e = displayedEvents.get(position);
             StringBuilder sb = new StringBuilder();
             sb.append(e.place);
             sb.append(" | ");
@@ -228,7 +254,7 @@ public class EventsFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return events.size();
+            return displayedEvents.size();
         }
 
         protected class EventViewHolder extends RecyclerView.ViewHolder {
@@ -242,6 +268,8 @@ public class EventsFragment extends Fragment {
                 title = (TextView) v.findViewById(R.id.event_title);
                 image = (ImageView) v.findViewById(R.id.event_image);
                 place = (TextView) v.findViewById(R.id.event_place);
+                v.findViewById(R.id.event_friends_attending).setVisibility(View.GONE);
+                v.findViewById(R.id.event_attend).setVisibility(View.GONE);
             }
 
             public void loadImage(String eventId) {
