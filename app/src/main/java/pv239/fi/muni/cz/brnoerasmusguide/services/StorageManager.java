@@ -21,7 +21,7 @@ public class StorageManager {
     public static void saveFaculties(String key, List<Faculty> list, Context context) {
         Gson gson = new Gson();
         SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-        sp.edit().putString(key, gson.toJson(list)).commit();
+        sp.edit().putString(key, gson.toJson(list)).apply();
     }
 
     public static List<Faculty> loadFaculties(String key, Context context) {
@@ -37,7 +37,7 @@ public class StorageManager {
     public static void saveBuildings(String key, List<Building> list, Context context) {
         Gson gson = new Gson();
         SharedPreferences sp = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
-        sp.edit().putString(key, gson.toJson(list)).commit();
+        sp.edit().putString(key, gson.toJson(list)).apply();
     }
 
     public static List<Building> loadBuildings(String key, Context context) {
