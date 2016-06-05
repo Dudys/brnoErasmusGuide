@@ -29,7 +29,7 @@ import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Faculty;
-import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
+import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApi;
 import pv239.fi.muni.cz.brnoerasmusguide.services.StorageManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,7 +77,7 @@ public class FacultiesFragment extends Fragment {
 
         list.setLayoutManager(mLayoutManager);
 
-        ServiceApiForBuldings.get().getFaculties().enqueue(new Callback<List<Faculty>>() {
+        ServiceApi.get().getFaculties().enqueue(new Callback<List<Faculty>>() {
             @Override
             public void onResponse(Call<List<Faculty>> call, final Response<List<Faculty>> response) {
 

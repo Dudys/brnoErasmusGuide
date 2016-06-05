@@ -43,27 +43,14 @@
                 android:layout_height="wrap_content"
                 android:text="event place"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/event_friends_attending"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/event_attend"
-                    android:textSize="16sp"
-                    android:text="4 friends are attending" />
-
-                <Button
-                    android:id="@+id/event_attend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/event_attend"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="4dp" />
-            </RelativeLayout>
+            <Button
+                android:id="@+id/event_attend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_details"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="4dp" />
 
         </LinearLayout>
 

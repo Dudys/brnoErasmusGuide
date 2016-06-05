@@ -51,5 +51,8 @@ public class ServiceApi {
 
         @GET("dorms.json")
         Call<List<Building>> getDormitories();
+
+        @GET("groups.json")
+        Call<List<String>> getGroups();
     }
 }

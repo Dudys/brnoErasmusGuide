@@ -3,7 +3,7 @@
     <string name="eventsButtonText">Events</string>
     <string name="facebook_app_id">573425292833632</string>
     <string name="fb_login_protocol_scheme">fb573425292833632</string>
-    <string name="event_attend">Attend</string>
+    <string name="event_details">Details</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_menu">MenuActivity</string>
 

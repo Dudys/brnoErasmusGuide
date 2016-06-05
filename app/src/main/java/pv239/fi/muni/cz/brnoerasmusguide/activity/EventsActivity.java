@@ -2,15 +2,20 @@ package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,7 +23,13 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
+import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Event;
+import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApi;
+import pv239.fi.muni.cz.brnoerasmusguide.services.StorageManager;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -44,18 +55,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EventsActivity extends Fragment {
+public class EventsActivity extends AppCompatActivity {
 
-    private static final String[] ERASMUS_GROUP_ID = {"1652673088347828", "11480938751"};
+    private static final String JSON_KEY_FOR_GROUPS = "groups_id_json_key";
+    private static final String JSON_KEY_FOR_EVENTS = "events_json_key";
     private static final int FILTER_ALL = R.id.filter_all;
     private static final int FILTER_FUTURE = R.id.filter_future;
     private static final int FILTER_PAST = R.id.filter_past;
+
+    private Context context = this;
+
+    private List<String> erasmusGroupsId;
+    private boolean showFilter = true;
+    private int lastCheckedMenu = 0;
+    private Menu actualMenu;
 
     @Bind(R.id.event_list) RecyclerView eventList;
     @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
     @Bind(R.id.login_button) LoginButton mLoginButton;
 
-    private Context appContext;
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
@@ -80,34 +98,61 @@ public class EventsActivity extends Fragment {
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_events, container, false);
-        ButterKnife.bind(this, v);
-        return v;
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        menu.getItem(0).getSubMenu().getItem(0).setChecked(true);
+        actualMenu = menu;
+        return showFilter;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.appContext = context;
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        if(id == R.id.filter_all || id == R.id.filter_future || id == R.id.filter_past) {
+            actualMenu.getItem(0).getSubMenu().getItem(lastCheckedMenu).setChecked(false);
+            lastCheckedMenu = (id == R.id.filter_all ? 0 : (id == R.id.filter_future ? 1 : 2));
+            item.setChecked(true);
+            this.filterHasChanged(id);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-    }
+        setContentView(R.layout.activity_events);
+        ButterKnife.bind(this);
+        getSupportActionBar().setTitle("Events");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        appContext = null;
-    }
+        ServiceApi.get().getGroups().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+                if (response.isSuccessful()) {
+                    message.setVisibility(View.INVISIBLE);
+                    fbPrompt.setVisibility(View.INVISIBLE);
+                    mLoginButton.setVisibility(View.INVISIBLE);
+                    erasmusGroupsId = response.body();
+                } else {
+                    message.setText("You have to be connected to internet to load any events!");
+                    mLoginButton.setVisibility(View.INVISIBLE);
+                }
+                eventList.setAdapter(new EventAdapter());
+            }
 
-    private Context getApplicationContext() {
-        return appContext;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+                message.setText("You have to be connected to internet to load any events!");
+                mLoginButton.setVisibility(View.INVISIBLE);
+            }
+        });
 
         mCallbackManager = CallbackManager.Factory.create();
         mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_events", "user_managed_groups"));
@@ -128,9 +173,8 @@ public class EventsActivity extends Fragment {
 
         mTokenTracker.startTracking();
         mProfileTracker.startTracking();
-        // AppEventsLogger.activateApp(this);
 
-        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+        LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         eventList.setLayoutManager(llm);
     }
@@ -159,16 +203,6 @@ public class EventsActivity extends Fragment {
     private void displayWelcomeMessage(Profile profile){
         if(profile != null) {
             Log.d("EventsActivity", "Welcome " + profile.getName());
-            fbPrompt.setVisibility(View.INVISIBLE);
-            eventList.setAdapter(new EventAdapter());
-//            TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
-//            if (eventList.getChildCount() == 0){
-//                message.setText("Not found any events from Erasmus Facebook group and ISC MU Brno page!");
-//                mLoginButton.setVisibility(View.INVISIBLE);
-//            } else {
-//                message.setVisibility(View.INVISIBLE);
-//
-//            }
         }
     }
 
@@ -182,7 +216,7 @@ public class EventsActivity extends Fragment {
         private List<Event> displayedEvents = new ArrayList<>();
 
         public EventAdapter() {
-            for (String groupId : ERASMUS_GROUP_ID) {
+            for (String groupId : erasmusGroupsId) {
                 GraphRequest request = GraphRequest.newGraphPathRequest(
                         AccessToken.getCurrentAccessToken(),
                         "/" + groupId + "/events",
@@ -195,7 +229,7 @@ public class EventsActivity extends Fragment {
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         try {
                                             final Event e = new Event(jsonArray.getJSONObject(i));
-                                            if (!events.contains(e) && e.startTime.isAfter(DateTime.now().minusMonths(2))) {
+                                            if (!events.contains(e) && e.startTime.isAfter(DateTime.now().minusMonths(1))) {
                                                 events.add(e);
                                                 Log.d("EventAdapter", "Event added");
                                             }
@@ -215,6 +249,7 @@ public class EventsActivity extends Fragment {
                 );
                 request.executeAsync();
             }
+
         }
 
         public void filterChanged(int options) {
@@ -248,6 +283,7 @@ public class EventsActivity extends Fragment {
 
             holder.title.setText(e.name);
             holder.place.setText(sb.toString());
+            holder.eventId = e.id;
             holder.loadImage(e.id);
         }
 
@@ -258,17 +294,25 @@ public class EventsActivity extends Fragment {
 
         protected class EventViewHolder extends RecyclerView.ViewHolder {
 
+            protected String eventId;
             protected TextView title;
             protected ImageView image;
             protected TextView place;
+            protected Button details;
 
             public EventViewHolder(View v) {
                 super(v);
                 title = (TextView) v.findViewById(R.id.event_title);
                 image = (ImageView) v.findViewById(R.id.event_image);
                 place = (TextView) v.findViewById(R.id.event_place);
-                v.findViewById(R.id.event_friends_attending).setVisibility(View.GONE);
-                v.findViewById(R.id.event_attend).setVisibility(View.GONE);
+                details = (Button) v.findViewById(R.id.event_attend);
+
+                details.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        String url = "https://www.facebook.com/events/" + eventId;
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    }
+                });
             }
 
             public void loadImage(String eventId) {

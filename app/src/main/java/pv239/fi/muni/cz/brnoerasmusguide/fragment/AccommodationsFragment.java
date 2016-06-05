@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 import pv239.fi.muni.cz.brnoerasmusguide.R;
 import pv239.fi.muni.cz.brnoerasmusguide.activity.BuildingDetailActivity;
 import pv239.fi.muni.cz.brnoerasmusguide.dataClasses.Building;
-import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApiForBuldings;
+import pv239.fi.muni.cz.brnoerasmusguide.services.ServiceApi;
 import pv239.fi.muni.cz.brnoerasmusguide.services.StorageManager;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -71,7 +71,7 @@ public class AccommodationsFragment extends Fragment {
     }
 
     private void loadJSON() {
-        Call<List<Building>> call = ServiceApiForBuldings.get().getDormitories();
+        Call<List<Building>> call = ServiceApi.get().getDormitories();
         call.enqueue(new Callback<List<Building>>() {
             @Override
             public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
