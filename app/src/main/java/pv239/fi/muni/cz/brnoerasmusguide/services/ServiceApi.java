@@ -14,7 +14,7 @@ import retrofit2.http.GET;
 /**
  * Created by Jan Duda on 5/20/2016.
  */
-public class ServiceApiForBuldings {
+public class ServiceApi {
 
     private static final String URL = "https://is.muni.cz/www/396035/63281828/";
 

@@ -1,4 +1,4 @@
-package pv239.fi.muni.cz.brnoerasmusguide.fragment;
+package pv239.fi.muni.cz.brnoerasmusguide.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,17 +36,15 @@ import com.facebook.login.widget.LoginButton;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-public class EventsFragment extends Fragment {
+public class EventsActivity extends Fragment {
 
     private static final String[] ERASMUS_GROUP_ID = {"1652673088347828", "11480938751"};
     private static final int FILTER_ALL = R.id.filter_all;
@@ -112,7 +110,7 @@ public class EventsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mCallbackManager = CallbackManager.Factory.create();
-        mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends", "user_events", "user_managed_groups"));
+        mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_events", "user_managed_groups"));
         mLoginButton.registerCallback(mCallbackManager, mCallback);
 
         mTokenTracker = new AccessTokenTracker() {
@@ -161,15 +159,16 @@ public class EventsFragment extends Fragment {
     private void displayWelcomeMessage(Profile profile){
         if(profile != null) {
             Log.d("EventsActivity", "Welcome " + profile.getName());
+            fbPrompt.setVisibility(View.INVISIBLE);
             eventList.setAdapter(new EventAdapter());
-            TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
-            if (eventList.getChildCount() == 0){
-                message.setText("Not found any events from Erasmus Facebook group and ISC MU Brno page!");
-                mLoginButton.setVisibility(View.INVISIBLE);
-            } else {
-                message.setVisibility(View.INVISIBLE);
-                fbPrompt.setVisibility(View.INVISIBLE);
-            }
+//            TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+//            if (eventList.getChildCount() == 0){
+//                message.setText("Not found any events from Erasmus Facebook group and ISC MU Brno page!");
+//                mLoginButton.setVisibility(View.INVISIBLE);
+//            } else {
+//                message.setVisibility(View.INVISIBLE);
+//
+//            }
         }
     }
 
@@ -196,7 +195,7 @@ public class EventsFragment extends Fragment {
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         try {
                                             final Event e = new Event(jsonArray.getJSONObject(i));
-                                            if (!events.contains(e)) {
+                                            if (!events.contains(e) && e.startTime.isAfter(DateTime.now().minusMonths(2))) {
                                                 events.add(e);
                                                 Log.d("EventAdapter", "Event added");
                                             }
