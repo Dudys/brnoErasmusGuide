@@ -1,4 +1,4 @@
-package pv239.fi.muni.cz.brnoerasmusguide.activity;
+package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,13 +6,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,15 +46,17 @@ import com.facebook.login.widget.LoginButton;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class EventsActivity extends AppCompatActivity {
+public class EventsFragment extends Fragment {
 
     private static final String JSON_KEY_FOR_GROUPS = "groups_id_json_key";
     private static final String JSON_KEY_FOR_EVENTS = "events_json_key";
@@ -63,17 +64,13 @@ public class EventsActivity extends AppCompatActivity {
     private static final int FILTER_FUTURE = R.id.filter_future;
     private static final int FILTER_PAST = R.id.filter_past;
 
-    private Context context = this;
-
     private List<String> erasmusGroupsId;
-    private boolean showFilter = true;
-    private int lastCheckedMenu = 0;
-    private Menu actualMenu;
-
     @Bind(R.id.event_list) RecyclerView eventList;
     @Bind(R.id.facebook_prompt) LinearLayout fbPrompt;
     @Bind(R.id.login_button) LoginButton mLoginButton;
 
+    private boolean fbLoggedIn = false;
+    private Context appContext;
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
@@ -98,65 +95,39 @@ public class EventsActivity extends AppCompatActivity {
     };
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        menu.getItem(0).getSubMenu().getItem(0).setChecked(true);
-        actualMenu = menu;
-        return showFilter;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_events, container, false);
+        ButterKnife.bind(this, v);
+        return v;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(item.getItemId() == android.R.id.home){
-            finish();
-        }
-        if(id == R.id.filter_all || id == R.id.filter_future || id == R.id.filter_past) {
-            actualMenu.getItem(0).getSubMenu().getItem(lastCheckedMenu).setChecked(false);
-            lastCheckedMenu = (id == R.id.filter_all ? 0 : (id == R.id.filter_future ? 1 : 2));
-            item.setChecked(true);
-            this.filterHasChanged(id);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.appContext = context;
         FacebookSdk.sdkInitialize(getApplicationContext());
-        setContentView(R.layout.activity_events);
-        ButterKnife.bind(this);
-        getSupportActionBar().setTitle("Events");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-        ServiceApi.get().getGroups().enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
-                if (response.isSuccessful()) {
-                    message.setVisibility(View.INVISIBLE);
-                    fbPrompt.setVisibility(View.INVISIBLE);
-                    mLoginButton.setVisibility(View.INVISIBLE);
-                    erasmusGroupsId = response.body();
-                } else {
-                    message.setText("You have to be connected to internet to load any events!");
-                    mLoginButton.setVisibility(View.INVISIBLE);
-                }
-                eventList.setAdapter(new EventAdapter());
-            }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        appContext = null;
+    }
 
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
-                message.setText("You have to be connected to internet to load any events!");
-                mLoginButton.setVisibility(View.INVISIBLE);
-            }
-        });
+    private Context getApplicationContext() {
+        return appContext;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         mCallbackManager = CallbackManager.Factory.create();
         mLoginButton.setReadPermissions(Arrays.asList("public_profile", "user_events", "user_managed_groups"));
         mLoginButton.registerCallback(mCallbackManager, mCallback);
+        mLoginButton.setFragment(this);
 
         mTokenTracker = new AccessTokenTracker() {
             @Override
@@ -174,7 +145,33 @@ public class EventsActivity extends AppCompatActivity {
         mTokenTracker.startTracking();
         mProfileTracker.startTracking();
 
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        ServiceApi.get().getGroups().enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+                if (response.isSuccessful()) {
+                    erasmusGroupsId = response.body();
+                    if(fbLoggedIn) {
+                        fbPrompt.setVisibility(View.INVISIBLE);
+                        eventList.setAdapter(new EventAdapter());
+                    }
+                } else {
+                    erasmusGroupsId = new ArrayList<>();
+                    message.setText("You have to be connected to internet to load any events!");
+                    mLoginButton.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+                message.setText("You have to be connected to internet to load any events!");
+                mLoginButton.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
+        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         eventList.setLayoutManager(llm);
     }
@@ -203,6 +200,20 @@ public class EventsActivity extends AppCompatActivity {
     private void displayWelcomeMessage(Profile profile){
         if(profile != null) {
             Log.d("EventsActivity", "Welcome " + profile.getName());
+            fbLoggedIn = true;
+            mLoginButton.setVisibility(View.INVISIBLE);
+            if(erasmusGroupsId == null) {
+                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+                message.setText("Loading data.");
+            }
+            else if(erasmusGroupsId.size() == 0) {
+                TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
+                message.setText("Error occurred while loading data.");
+            }
+            else {
+                fbPrompt.setVisibility(View.INVISIBLE);
+                eventList.setAdapter(new EventAdapter());
+            }
         }
     }
 
