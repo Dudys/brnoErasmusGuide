@@ -11,31 +11,44 @@
 \begin{frame}
   \begin{center}
     \includegraphics[scale=0.13]{app_menu_header}
-  \titlepage
   \end{center}
 \end{frame}
 
 \begin{frame}{Tym}
-  \textbf{Brno Erasmus Guide}
-  \begin{enumerate}
+  \begin{minipage}{\textwidth}
+    \textbf{Brno Erasmus Guide}
+    \begin{enumerate}
       \item prehled fakult, menz, koleji a akci
       \item data offline
       \item Android
-  \end{enumerate}
-
-  \begin{itemize}
-      \item Jakub Fiser - Projekt manazer, grafika a UX (45\%)
-      \item Jan Duda - Developer, fb pripojeni, seznamy, detaily (45\%)
-      \item Norbert Fabian - Marketing, Vytvoreni jsonu (10\%)
-  \end{itemize}
+    \end{enumerate}
+    \vspace{2\baselineskip}
+  \end{minipage}
+  \begin{minipage}{\textwidth}
+    \begin{itemize}
+      \item Jakub Fiser (Projekt manazer) - grafika a UX (45\%)
+      \item Jan Duda (Developer) - fb pripojeni, seznamy, detaily (45\%)
+      \item Norbert Fabian (Zakaznik) - napad aplikace a vytvoreni jsonu (10\%)
+    \end{itemize}  
+  \end{minipage}
 \end{frame}
 
 \begin{frame}{Aplikace}
   Jak jsme to tvorili, popis implementovane cinnosti.
+ \begin{itemize}
+   \item seznamy budov nacitany z internetu
+   \item offline uchovani seznamu budov
+   \item agregace eventu z fb skupin
+ \end{itemize}  
 \end{frame}
 
 \begin{frame}{Komplikace}
  Jakym technickym problemum jsme celili a jak jsme je vyresili.
+ \begin{itemize}
+   \item pomer stran obrazku - PercentRelativeLayout
+   \item logika navigace - Activity vs. Fragment
+   \item omezeni FB SDK - ID skupiny
+ \end{itemize}
 \end{frame}
 
 \begin{frame}{Screenshoty}
