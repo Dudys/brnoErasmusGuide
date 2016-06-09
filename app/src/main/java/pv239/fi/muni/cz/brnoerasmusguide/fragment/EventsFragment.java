@@ -1,5 +1,6 @@
 package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -71,6 +72,7 @@ public class EventsFragment extends Fragment {
 
     private boolean fbLoggedIn = false;
     private Context appContext;
+    private ProgressDialog throbber;
     private CallbackManager mCallbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
@@ -108,6 +110,8 @@ public class EventsFragment extends Fragment {
         super.onAttach(context);
         this.appContext = context;
         FacebookSdk.sdkInitialize(getApplicationContext());
+        throbber = new ProgressDialog(getApplicationContext());
+        throbber.setTitle("Loading ..");
     }
 
     @Override
@@ -160,6 +164,7 @@ public class EventsFragment extends Fragment {
                     message.setText("You have to be connected to internet to load any events!");
                     mLoginButton.setVisibility(View.INVISIBLE);
                 }
+                throbber.dismiss();
             }
 
             @Override
@@ -167,9 +172,9 @@ public class EventsFragment extends Fragment {
                 TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
                 message.setText("You have to be connected to internet to load any events!");
                 mLoginButton.setVisibility(View.INVISIBLE);
+                throbber.dismiss();
             }
         });
-
 
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -205,6 +210,7 @@ public class EventsFragment extends Fragment {
             if(erasmusGroupsId == null) {
                 TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);
                 message.setText("Loading data.");
+                throbber.show();
             }
             else if(erasmusGroupsId.size() == 0) {
                 TextView message = (TextView) fbPrompt.findViewById(R.id.fb_login_message);

@@ -1,5 +1,6 @@
 package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -33,11 +34,14 @@ public class CanteensFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private Context context;
     protected CanteenAdapter canteenAdapter;
+    private ProgressDialog throbber;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        throbber = new ProgressDialog(context);
+        throbber.setTitle("Loading ..");
     }
 
     @Override
@@ -64,6 +68,7 @@ public class CanteensFragment extends Fragment {
 
         list.setLayoutManager(mLayoutManager);
 
+        throbber.show();
         ServiceApi.get().getCanteens().enqueue(new Callback<List<Building>>() {
             @Override
             public void onResponse(Call<List<Building>> call, Response<List<Building>> response) {
@@ -76,6 +81,7 @@ public class CanteensFragment extends Fragment {
                     canteenAdapter = new CanteenAdapter(bl);
                 }
                 list.setAdapter(canteenAdapter);
+                throbber.dismiss();
             }
 
             @Override
@@ -83,6 +89,7 @@ public class CanteensFragment extends Fragment {
                 List<Building> bl = StorageManager.loadBuildings(JSON_KEY, context);
                 canteenAdapter = new CanteenAdapter(bl);
                 list.setAdapter(canteenAdapter);
+                throbber.dismiss();
             }
         });
     }

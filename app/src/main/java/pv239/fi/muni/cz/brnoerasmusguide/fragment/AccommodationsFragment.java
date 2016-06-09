@@ -1,5 +1,6 @@
 package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,11 +32,14 @@ public class AccommodationsFragment extends Fragment {
     private static final String JSON_KEY = "dormitories_json_key";
     private BuildingsAdapter adapter;
     private Context context;
+    private ProgressDialog throbber;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        throbber = new ProgressDialog(context);
+        throbber.setTitle("Loading ..");
     }
 
     @Override
@@ -71,6 +75,7 @@ public class AccommodationsFragment extends Fragment {
     }
 
     private void loadJSON() {
+        throbber.show();
         Call<List<Building>> call = ServiceApi.get().getDormitories();
         call.enqueue(new Callback<List<Building>>() {
             @Override
@@ -84,6 +89,7 @@ public class AccommodationsFragment extends Fragment {
                     adapter = new BuildingsAdapter(bl);
                 }
                 list.setAdapter(adapter);
+                throbber.dismiss();
             }
 
             @Override
@@ -92,6 +98,7 @@ public class AccommodationsFragment extends Fragment {
                 List<Building> bl = StorageManager.loadBuildings(JSON_KEY, context);
                 adapter = new BuildingsAdapter(bl);
                 list.setAdapter(adapter);
+                throbber.dismiss();
             }
         });
     }

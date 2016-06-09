@@ -1,5 +1,6 @@
 package pv239.fi.muni.cz.brnoerasmusguide.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -46,11 +47,14 @@ public class FacultiesFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     protected Context context;
     protected FacultyAdapter facultyAdapter;
+    private ProgressDialog throbber;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        throbber = new ProgressDialog(context);
+        throbber.setTitle("Loading ..");
     }
 
     @Override
@@ -77,6 +81,7 @@ public class FacultiesFragment extends Fragment {
 
         list.setLayoutManager(mLayoutManager);
 
+        throbber.show();
         ServiceApi.get().getFaculties().enqueue(new Callback<List<Faculty>>() {
             @Override
             public void onResponse(Call<List<Faculty>> call, final Response<List<Faculty>> response) {
@@ -89,6 +94,7 @@ public class FacultiesFragment extends Fragment {
                     facultyAdapter = new FacultyAdapter(context, fl);
                 }
                 list.setAdapter(facultyAdapter);
+                throbber.dismiss();
             }
 
             @Override
@@ -97,6 +103,7 @@ public class FacultiesFragment extends Fragment {
                 List<Faculty> fl = StorageManager.loadFaculties(JSON_KEY, context);
                 facultyAdapter = new FacultyAdapter(context, fl);
                 list.setAdapter(facultyAdapter);
+                throbber.dismiss();
             }
         });
     }
